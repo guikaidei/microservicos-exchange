@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exchange
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: exchange
+  template:
+    metadata:
+      labels:
+        app: exchange
+    spec:
+      containers:
+          - name: exchange
+            image: 'mmp052/exchange:latest'
+            imagePullPolicy: IfNotPresent
+            ports:
+              - containerPort: 8080
+            env:
+              - name: DATABASE_HOST
+                valueFrom:
+                  configMapKeyRef:
+                    name: postgres-configmap
+                    key: POSTGRES_HOST
+
+              - name: DATABASE_USER
+                valueFrom:
+                  secretKeyRef:
+                    name: postgres-secrets
+                    key: POSTGRES_USER
+
+              - name: DATABASE_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: postgres-secrets
+                    key: POSTGRES_PASSWORD
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+    name: exchange
+    labels:
+        app: exchange
+spec:
+    type: ClusterIP
+    ports:
+        - port: 8080
+    selector:
+        app: exchange
