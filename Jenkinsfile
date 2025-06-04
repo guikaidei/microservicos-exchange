@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         SERVICE = 'exchange'
-        NAME = "mmp052/${env.SERVICE}"
+        NAME = "guikaidei/${env.SERVICE}"
     }
     stages {
  
